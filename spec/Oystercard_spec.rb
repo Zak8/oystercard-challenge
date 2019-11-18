@@ -27,6 +27,7 @@ describe Oystercard do
 
   describe '#in_journey?' do
      it "returns true if the oystercard is mid-journey" do
+        allow(subject).to receive(:balance) {2}
         subject.touch_in
         is_expected.to be_in_journey
      end
@@ -35,6 +36,14 @@ describe Oystercard do
         subject.touch_out
         is_expected.not_to be_in_journey
      end
+  end
+
+  describe "#touch_in" do
+    it "throws an error if balance is < 1 when touching in" do
+      allow(subject).to receive(:balance) {0}
+      expect {subject.touch_in}.to raise_error("Insufficient funds")
+    end
+
   end
 
 end
