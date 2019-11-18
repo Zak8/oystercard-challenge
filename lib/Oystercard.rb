@@ -12,4 +12,8 @@ class Oystercard
     raise "Balance limit is £#{BALANCE_LIMIT}" if amount + balance > BALANCE_LIMIT
     @balance += amount
   end
+  
+  def deduct(amount)
+    @balance -= amount
+  end
 end
