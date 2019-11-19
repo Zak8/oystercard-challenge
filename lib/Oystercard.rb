@@ -34,8 +34,13 @@ class Oystercard
   end
 
   private
-  
+
   def deduct(amount)
     @balance -= amount
+  end
+
+  def Combine_St_In_Out
+    hash_of_stations = Hash.new
+    hash_of_stations[@entry_station] = @exit_station
   end
 end
