@@ -1,12 +1,19 @@
 require 'Oystercard'
 
 describe Oystercard do
+  let(:liverpool_stn) { double(:station, name: :liverpool_station) }
+  let(:test_oyster) { Oystercard.new }
+  # define a double ^^  identifier ^^  receives ^^  returns^^  <<< reference comment
 
-   describe '#balance' do
-     it 'balance on card should be 0' do
-       expect(subject.balance).to eq 0
-     end
-   end
+  before(:each) do
+    test_oyster.top_up(10)
+  end
+
+  describe '#balance' do
+    it 'balance on card should be 0' do
+      expect(subject.balance).to eq 0
+    end
+  end
 
    describe "#top_up" do
     it "should add 1 to balance" do
@@ -20,20 +27,11 @@ describe Oystercard do
     end
   end
 
-<<<<<<< HEAD
-=======
-  describe "#deduct" do
-    it "should deduct an amount from Oystercard" do
-      expect{subject.send(:deduct, 1)}.to change{subject.balance}.by -1
-    end
-  end
-
->>>>>>> a0afedb669d79b82e82ebde9a10bd6a1d6057fdb
   describe '#in_journey?' do
      it "returns true if the oystercard is mid-journey" do
-        subject.top_up(2)
-        subject.touch_in
-        is_expected.to be_in_journey
+        test_oyster.top_up(2)
+        test_oyster.touch_in(liverpool_stn)
+        expect(test_oyster).to be_in_journey
      end
 
      it 'returns false if the oystercard is not mid-journey' do
@@ -45,28 +43,28 @@ describe Oystercard do
   describe "#touch_in" do
     it "throws an error if balance is < 1 when touching in" do
       allow(subject).to receive(:balance) { 0 }
-      expect{subject.touch_in}.to raise_error("Insufficient funds")
+      expect { subject.touch_in(liverpool_stn) }.to raise_error("Insufficient funds")
     end
   end
 
-<<<<<<< HEAD
   describe "#touch_out" do
     it "should deduct money when the user touches out." do
-      oyster = Oystercard.new
-      oyster.top_up(10)
-      oyster.touch_in
-      oyster.touch_out
-      expect{oyster.touch_out}.to change{oyster.balance}.by -1
-    end
-  end
-=======
-  describe '#touch_out' do
-    it "reduces the balance by the minimum fare when you touch out" do
-        subject.top_up(1)
-        subject.touch_in
-       expect {subject.touch_out}.to change{subject.balance}.by(-Oystercard::MINIMUM_FARE)
+      test_oyster.touch_in(liverpool_stn)
+      test_oyster.touch_out
+      expect { test_oyster.touch_out }.to change { test_oyster.balance }.by -1
     end
   end
 
->>>>>>> a0afedb669d79b82e82ebde9a10bd6a1d6057fdb
+  it 'saves the entry station on touch-in' do
+    test_oyster.touch_in(liverpool_stn)
+
+    expect(test_oyster.entry_station).to eq(:liverpool_station)
+  end
+
+  it 'forgets the entry station on touch-out' do
+    test_oyster.touch_in(liverpool_stn)
+    test_oyster.touch_out
+
+    expect(test_oyster.entry_station).to be_nil
+  end
 end
