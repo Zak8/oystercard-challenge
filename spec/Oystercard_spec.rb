@@ -49,4 +49,11 @@ describe Oystercard do
       expect{oyster.touch_out}.to change{oyster.balance}.by -1
     end
   end
+
+  describe '#history' do
+    it 'should return a history of all journeys' do
+      test_oystercard
+      expect()
+    end
+  end
 end
