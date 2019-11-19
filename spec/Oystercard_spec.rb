@@ -2,8 +2,9 @@ require 'Oystercard'
 
 describe Oystercard do
   let(:liverpool_stn) { double(:station, name: :liverpool_station) }
+# define a double ^   identifier ^ receives ^  returns^  <<< reference comment
+  let(:moorgate_stn) { double(:station, name: :moorgate_station) }
   let(:test_oyster) { Oystercard.new }
-  # define a double ^^  identifier ^^  receives ^^  returns^^  <<< reference comment
 
   before(:each) do
     test_oyster.top_up(10)
@@ -35,7 +36,7 @@ describe Oystercard do
      end
 
      it 'returns false if the oystercard is not mid-journey' do
-        subject.touch_out
+        subject.touch_out(moorgate_stn)
         is_expected.not_to be_in_journey
      end
   end
@@ -50,8 +51,8 @@ describe Oystercard do
   describe "#touch_out" do
     it "should deduct money when the user touches out." do
       test_oyster.touch_in(liverpool_stn)
-      test_oyster.touch_out
-      expect { test_oyster.touch_out }.to change { test_oyster.balance }.by -1
+      test_oyster.touch_out(moorgate_stn)
+      expect { test_oyster.touch_out(moorgate_stn) }.to change { test_oyster.balance }.by -1
     end
   end
 
@@ -63,8 +64,26 @@ describe Oystercard do
 
   it 'forgets the entry station on touch-out' do
     test_oyster.touch_in(liverpool_stn)
-    test_oyster.touch_out
+    test_oyster.touch_out(moorgate_stn)
 
     expect(test_oyster.entry_station).to be_nil
+  end
+
+  describe '#journey' do
+    context '#new oystercard' do
+      it 'should have an empty list of journeys at first' do
+        expect(subject.history).to eq []
+      end
+    end
+
+    it 'should return a history of journeys once used' do
+      test_oyster.touch_in(liverpool_stn)
+      test_oyster.touch_out(moorgate_stn)
+      test_oyster.touch_in(moorgate_stn)
+      test_oyster.touch_out(liverpool_stn)
+
+      expect(test_oyster.history).to eq [{ entry: :liverpool_station, exit: :moorgate_station}, 
+                                         { entry: :moorgate_station, exit: :liverpool_station}]
+    end
   end
 end
