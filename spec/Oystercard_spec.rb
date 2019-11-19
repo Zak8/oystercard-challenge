@@ -19,12 +19,6 @@ describe Oystercard do
     end
   end
 
-  describe "#deduct" do
-    it "should deduct an amount from Oystercard" do
-      expect{subject.deduct(1)}.to change{subject.balance}.by -1
-    end
-  end
-
   describe '#in_journey?' do
      it "returns true if the oystercard is mid-journey" do
         subject.top_up(2)
@@ -43,7 +37,15 @@ describe Oystercard do
       allow(subject).to receive(:balance) { 0 }
       expect{subject.touch_in}.to raise_error("Insufficient funds")
     end
-
   end
 
+  describe "#touch_out" do
+    it "should deduct money when the user touches out." do
+      oyster = Oystercard.new
+      oyster.top_up(10)
+      oyster.touch_in
+      oyster.touch_out
+      expect{oyster.touch_out}.to change{oyster.balance}.by -1
+    end
+  end
 end
