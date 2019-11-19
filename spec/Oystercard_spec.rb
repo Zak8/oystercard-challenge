@@ -1,6 +1,7 @@
 require 'Oystercard'
 
 describe Oystercard do
+
    describe '#balance' do
      it 'balance on card should be 0' do
        expect(subject.balance).to eq 0
@@ -21,7 +22,7 @@ describe Oystercard do
 
   describe "#deduct" do
     it "should deduct an amount from Oystercard" do
-      expect{subject.deduct(1)}.to change{subject.balance}.by -1
+      expect{subject.send(:deduct, 1)}.to change{subject.balance}.by -1
     end
   end
 
@@ -44,6 +45,14 @@ describe Oystercard do
       expect{subject.touch_in}.to raise_error("Insufficient funds")
     end
 
+  end
+
+  describe '#touch_out' do
+    it "reduces the balance by the minimum fare when you touch out" do
+        subject.top_up(1)
+        subject.touch_in
+       expect {subject.touch_out}.to change{subject.balance}.by(-Oystercard::MINIMUM_FARE)
+    end
   end
 
 end
